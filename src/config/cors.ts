@@ -7,8 +7,9 @@ export const corsConfig: CorsOptions = {
         if(process.argv[2] === 'dev') {
             whitelist.push(undefined);
         }
-
-        if(whitelist.includes(origin)) {
+        
+        // Allow requests without 'Origin' header (e.g., Postman)
+        if(!origin || whitelist.includes(origin)) {
             callback(null, true);
         } else {
             callback(new Error('Not allowed by CORS'));
