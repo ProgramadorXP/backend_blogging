@@ -29,9 +29,16 @@ export const loginUser = async (req: Request, res: Response) => {
         { expiresIn: "1m" } // Set the expiration time for the token according to your needs
       );
 
+      //Set the token in an HTTP-only cookie
+      res.cookie("authToken", token, {
+        httpOnly: true, // Prevents JavaScript access to the cookie
+        secure: process.env.NODE_ENV === "production", // Ensures the cookie is sent only over HTTPS in production
+        sameSite: "strict", // Prevents CSRF attacks by restricting third-party sites from accessing the cookie
+        maxAge: 60 * 1000, // Matches token expiration (1 minute)
+      });
+      
       res.status(200).json({
         message: "Login successful",
-        token,
         user: {
           id: user.id,
           username: user.username,

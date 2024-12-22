@@ -9,24 +9,25 @@ declare global {
   }
 }
 
-//Authenticate the token
-export const authenticateToken = (
+export const verifyToken = (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  const token = req.header("Authorization")?.split(" ")[1];
+  const token = req.cookies.authToken; // Retrieve token from cookies
+
   if (!token) {
-    res.status(401).send("Access denied");
-    return;
+    return res
+      .status(401)
+      .json({ message: "Access denied, no token provided" });
   }
 
   try {
-    const payload = jwt.verify(token, process.env.JWT_SECRET!); // Verify the token
-    req.user = payload; // Adjunt the user to the request object
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!);
+    req.user = decoded; // Attach user info to the request object
     next();
-  } catch (err) {
-    res.status(403).json({ error: "Token invalid or expired" });
+  } catch (error) {
+    res.status(403).json({ message: "Invalid or expired token" });
   }
 };
 
