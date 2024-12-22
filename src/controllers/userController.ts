@@ -13,7 +13,7 @@ export const loginUser = async (req: Request, res: Response) => {
       //Search for the user
       const user = await User.findOne({ where: { username } });
       if (!user) {
-        return res.status(404).json({ error: "Invalid credentials" });
+        return res.status(404).json({ error: "Incorrect username" });
       }
 
       //Check if the password is correct
